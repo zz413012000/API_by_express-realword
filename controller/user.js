@@ -1,14 +1,22 @@
 const {User}=require("../model") // 引入 model/index.js
+const jwt  =require('../util/jwt')
+const {jwtSecret}=require('../config/config.default.js')
 // user login
-exports.login=(req,res,next)=>{ 
+exports.login=async(req,res,next)=>{ 
     try{
         // 1. get data
-        console.log(req.body)
         // 2. verify data
-        // 3. 驗證通過，save data in DB
-        // 4. send response
-        JSON('123456')
-        res.send('/post /user/login')
+        const user=req.user.toJSON()
+        const token= await jwt.sign({
+            userId:user._id
+        },jwtSecret,{
+            expiresIn: 60*60
+        })
+        // 3. send response
+        delete user.password
+        res.status(200).json({
+            ...user,token
+        })
     }catch(err){
         next(err)
     }
@@ -40,7 +48,9 @@ exports.register=async(req,res,next)=>{
 // get current user
 exports.getCurrentUser=(req,res,next)=>{ 
     try{
-        res.send('getCurrentUser')
+        res.status(200).json({
+            user:req.user
+        })
     }catch(err){
         next(err)
     }
