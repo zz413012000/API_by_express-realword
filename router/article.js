@@ -14,9 +14,9 @@ router.get('/:articleId',articleValidator.getArticle,articleCtrl.getArticle)
 // // 創建文章
 router.post('/',auth,articleValidator.createArticle,articleCtrl.createArticle)
 // // 更新文章
-// router.put('/:slug',articleCtrl.updateArticle)
+router.put('/:articleId',auth,articleValidator.updateArticle,articleCtrl.updateArticle)
 // // 刪除文章
-// router.delete('/:slug',articleCtrl.deleteArticle)
+router.delete('/:articleId',auth,articleValidator.deleteArticle,articleCtrl.deleteArticle)
 // // 添加文章評論
 // router.post('/:slug/comments',articleCtrl.createArticleComment)
 // // 獲取文章評論列表

@@ -27,7 +27,6 @@ exports.getArticles= async(req,res,next)=>{
         }
         if(author){
             const user=await User.findOne({username:author}) // 利用作者名取得，資料庫中指定的 document 
-            console.log("user:",user)
             filter.author=user? user._id :null
         }
         console.log(filter)
@@ -37,7 +36,7 @@ exports.getArticles= async(req,res,next)=>{
             .limit(Number.parseInt(limit)) // 取多少條
             .sort({// 排序
                 // -1 倒敘 , 1 升序
-                createdAt:-1
+                createAt:1
             }) 
             .populate('author')
         res.status(200).json({
@@ -60,6 +59,32 @@ exports.getArticle=async(req,res,next)=>{
             article
         })
     }catch(err){
+        next(err)
+    }
+}
+// 更新文章
+exports.updateArticle=async(req,res,next)=>{
+    try{
+        const article=req.article // validator 的 Article.findById() 找到原本在 DB 的 article 已經放進了 req.article
+        const bodyArticle=req.body.article // 新 put 上來的 article
+        article.title=bodyArticle.title || article.title // 如果 put 上來 req.body 有新的 title，就替換上去
+        article.description=bodyArticle.description || article.description
+        article.body=bodyArticle.body || article.body
+        await article.save() // article 是 Mongo 物件
+        // res.send("updateArticle")
+        res.status(200).json({
+            article
+        })
+    }catch(err){
+        next(err)
+    }
+}
+// 刪除文章
+exports.deleteArticle=async(req,res,next)=>{
+    try{
+        res.send("deleteArticle")
+    }
+    catch(err){
         next(err)
     }
 }
